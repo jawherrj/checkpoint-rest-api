@@ -46,7 +46,7 @@ router.patch("/:id", getmon, async (req, res) => {
 });
 
 //DELETE
-router.delete("/:id", getmon, async (req, res) => {
+router.delete("/delete/:id", getmon, async (req, res) => {
   try {
     await res.user.remove();
     res.json({ message: "User Deleted" });
