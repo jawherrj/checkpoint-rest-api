@@ -1,12 +1,14 @@
 const express = require("express");
+const { getmon } = require("../middleware/midmon");
 const router = express.Router();
-const user = require("../models/user");
+const am = require("../models/user");
 //post
 router.post("/post", async (req, res) => {
-  const User = new user({
-    ...req,
+  const User = new am({
+    monkytype: req.body.monkytype,
+    apename: req.body.apename,
+    bananas: req.body.bananas,
   });
-  console.log(req.body);
   try {
     const newuser = await User.save();
     res.status(201).json(newuser);
@@ -17,7 +19,7 @@ router.post("/post", async (req, res) => {
 //GET
 router.get("/GET", async (req, res) => {
   try {
-    const users = await User.find();
+    const users = await am.find();
     res.json(users);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -25,26 +27,26 @@ router.get("/GET", async (req, res) => {
 });
 
 //PUT
-router.patch("/:id", getUser, async (req, res) => {
-  if (req.body.name != null) {
-    res.user.name = req.body.name;
+router.patch("/:id", getmon, async (req, res) => {
+  if (req.body.monkytype != null) {
+    res.am.monkytype = req.body.monkytype;
   }
-  if (req.body.last_name != null) {
-    res.user.last_name = req.body.last_name;
+  if (req.body.apename != null) {
+    res.am.apename = req.body.apename;
   }
-  if (req.body.age != null) {
-    res.user.age = req.body.age;
+  if (req.body.bananas != null) {
+    res.am.bananas = req.body.bananas;
   }
   try {
-    const updatedUser = await res.user.save();
-    res.json(updatedUser);
+    const newmonkey = await res.am.save();
+    res.json(newmonkey);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
 });
 
 //DELETE
-router.delete("/:id", getUser, async (req, res) => {
+router.delete("/:id", getmon, async (req, res) => {
   try {
     await res.user.remove();
     res.json({ message: "User Deleted" });
@@ -53,18 +55,4 @@ router.delete("/:id", getUser, async (req, res) => {
   }
 });
 
-//ID middleware
-async function getUser(req, res, next) {
-  let user;
-  try {
-    user = await User.findById(req.params.id);
-    if (user == null) {
-      return res.status(404).json({ message: "Cannot find user" });
-    }
-  } catch (err) {
-    return res.status(500).json({ message: err.message });
-  }
-  res.user = user;
-  next();
-}
 module.exports = router;
